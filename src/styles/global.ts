@@ -1,6 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
+
+   :root {
+    --max-width: 1120px;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -18,7 +23,7 @@ export const GlobalStyle = createGlobalStyle`
     height: 100%;
   }
 
-    body, input, textarea, button {
+    *,body, input, textarea, button {
     font-family: "Archivo", sans-serif;
     font-size: 1rem;
     line-height: 160%;
