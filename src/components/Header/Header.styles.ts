@@ -23,7 +23,7 @@ export const HeaderContainer = styled.header`
     rgba(141, 201, 155, 0.5) 482%
   );
   overflow: hidden;
-  z-index: 1;
+  z-index: -1;
 
   &::before {
     content: '';
