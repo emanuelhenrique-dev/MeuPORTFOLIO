@@ -15,6 +15,7 @@ const lightSweep = keyframes`
 `;
 
 export const HeaderContainer = styled.header`
+  min-height: 296px;
   position: relative;
   padding: 4rem 0 8.3125rem;
   background: radial-gradient(
