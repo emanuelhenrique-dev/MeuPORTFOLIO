@@ -131,18 +131,23 @@ export function Home() {
         <h3>Todas Repositórios</h3>
         <div className="list-container">
           <SearchForm />
-          <div className="repository-list">
-            {repos.map((repo) => {
-              return (
-                <RepositoryCard
-                  name={repo.name}
-                  key={repo.id}
-                  description={repo.description}
-                  created_at={repo.created_at}
-                />
-              );
-            })}
-          </div>
+          {repos.length > 0 ? (
+            <div className="repository-list">
+              {repos.map((repo) => {
+                return (
+                  <RepositoryCard
+                    id={repo.id}
+                    name={repo.name}
+                    key={repo.id}
+                    description={repo.description}
+                    created_at={repo.created_at}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <h3>Nenhum repositório encontrado</h3>
+          )}
         </div>
       </RepositorySection>
     </HomeContainer>

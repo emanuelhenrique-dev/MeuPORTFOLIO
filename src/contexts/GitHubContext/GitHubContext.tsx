@@ -24,12 +24,18 @@ export interface GitHubRepo {
   description: string | null;
   created_at: string;
   stargazers_count: number;
+  owner: {
+    login: string;
+    html_url: string;
+  };
 }
 
 interface GitHubContextType {
+  username: string;
   profile: GitHubProfile | null;
   repos: GitHubRepo[];
   fetchRepos: (query?: string) => Promise<void>;
+  fetchRepoCommentCount: (repoName: string) => Promise<number>;
 }
 
 interface GitHubContextProviderProps {
@@ -112,13 +118,27 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
     [username, token]
   );
 
+  // ver a quantidade de comments de um repositório
+  async function fetchRepoCommentCount(repoName: string) {
+    const response = await axios.get(
+      `https://api.github.com/repos/${username}/${repoName}/issues`,
+      {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined
+      }
+    );
+
+    return response.data.length;
+  }
+
   useEffect(() => {
     fetchProfile();
     fetchRepos();
   }, [fetchProfile, fetchRepos]);
 
   return (
-    <GitHubContext.Provider value={{ profile, repos, fetchRepos }}>
+    <GitHubContext.Provider
+      value={{ profile, repos, fetchRepos, fetchRepoCommentCount, username }}
+    >
       {children}
     </GitHubContext.Provider>
   );

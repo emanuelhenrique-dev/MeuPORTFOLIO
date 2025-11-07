@@ -248,6 +248,14 @@ export const RepositorySection = styled.section`
     display: flex;
     flex-direction: column;
     gap: 30px;
+
+    > h3 {
+      text-align: center;
+      width: 100%;
+      font-weight: 700;
+      font-size: 1.25rem;
+      line-height: 100%;
+    }
   }
 
   .repository-list {

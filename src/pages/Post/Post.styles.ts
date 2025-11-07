@@ -65,6 +65,7 @@ export const HeadingContainer = styled.div`
 
     .info {
       display: flex;
+      flex-wrap: wrap;
       gap: 16px;
 
       span {
@@ -77,6 +78,14 @@ export const HeadingContainer = styled.div`
         font-size: 1rem;
 
         color: ${(props) => props.theme['base-span']};
+
+        a {
+          color: ${(props) => props.theme['base-span']};
+
+          &:hover {
+            filter: brightness(1.4);
+          }
+        }
       }
     }
   }
@@ -88,17 +97,45 @@ export const PostContent = styled.div`
   padding: 40px 32px;
   gap: 16px;
 
+  color: ${(props) => props.theme['base-subtext']};
+
   p {
     font-weight: 700;
     font-size: 1rem;
     line-height: 160%;
-
-    color: ${(props) => props.theme['base-subtext']};
   }
 
-  span {
-    padding: 1rem;
-    background: #1e2320;
-    border-radius: 2px;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: ${(props) => props.theme['base-title']};
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  a {
+    color: ${(props) => props.theme['green-primary']};
+    text-decoration: underline;
+  }
+
+  ul {
+    padding-left: 1.5rem;
+  }
+
+  @media (max-width: 450px) {
+    padding: 16px 12px;
   }
 `;

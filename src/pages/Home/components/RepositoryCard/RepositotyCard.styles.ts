@@ -1,29 +1,38 @@
 import styled from 'styled-components';
 
-export const RepositoryCardContainer = styled.div`
+import { Link as onLink } from 'react-router-dom';
+
+export const RepositoryCardContainer = styled(onLink)`
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 2rem;
+  padding: 2rem 1.5rem;
 
   background: ${(props) => props.theme['base-post']};
   border: 1px solid #252529;
   border-radius: 10px;
 
   max-width: 416px;
-  max-height: 260px;
+  min-height: 191px;
 
   cursor: pointer;
   .heading {
     display: flex;
     gap: 20px;
     align-items: flex-start;
+    justify-content: space-between;
     line-height: 100%;
 
     h3 {
       font-weight: 700;
       font-size: 1.25rem;
       line-height: 100%;
+      color: ${(props) => props.theme['base-title']};
+
+      max-width: 270px;
+
+      overflow: hidden; /* esconde o excesso de texto */
+      text-overflow: ellipsis;
     }
 
     span {
