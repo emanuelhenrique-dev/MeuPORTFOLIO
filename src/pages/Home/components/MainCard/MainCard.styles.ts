@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link as onLink } from 'react-router-dom';
 
 export const MainCardContainer = styled.div`
   display: flex;
@@ -9,7 +10,7 @@ export const MainCardContainer = styled.div`
     display: flex;
     gap: 5px;
 
-    button {
+    a {
       width: 100%;
       padding: 3px 5px;
 
@@ -18,14 +19,17 @@ export const MainCardContainer = styled.div`
       border-radius: 4px;
 
       cursor: pointer;
+      text-decoration: none;
+      color: ${(props) => props.theme['base-background']};
+      text-align: center;
     }
 
-    button:nth-child(2) {
+    a:nth-child(2) {
       background-color: transparent;
       color: ${(props) => props.theme['green-primary']};
     }
 
-    button:hover {
+    a:hover {
       background-color: #aee9bbff;
       color: #579c66ff;
       border: 1px solid ${(props) => props.theme['green-primary']};
@@ -39,7 +43,7 @@ export const MainCardContainer = styled.div`
   }
 `;
 
-export const CardInfo = styled.div`
+export const CardInfo = styled(onLink)`
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -65,6 +69,7 @@ export const CardInfo = styled.div`
     font-weight: 500;
     font-size: 22px;
     line-height: 24px;
+    color: ${(props) => props.theme['base-title']};
   }
 
   .tags {
@@ -73,8 +78,8 @@ export const CardInfo = styled.div`
   }
 `;
 
-interface tagVariant {
-  $tag: 'css' | 'js' | 'html' | 'figma';
+export interface tagVariant {
+  $tag: 'css' | 'js' | 'html' | 'figma' | 'react' | 'ts';
 }
 
 export const Tag = styled.span<tagVariant>`
@@ -89,10 +94,14 @@ export const Tag = styled.span<tagVariant>`
 
   color: ${({ $tag }) =>
     $tag === 'css'
-      ? '#0277BD'
+      ? ' #4fb3ecff'
       : $tag === 'js'
       ? '#D8C232'
       : $tag === 'html'
       ? '#E14E1D'
+      : $tag === 'react'
+      ? '#305174ff'
+      : $tag === 'ts'
+      ? '#0277BD'
       : '#C11574'};
 `;

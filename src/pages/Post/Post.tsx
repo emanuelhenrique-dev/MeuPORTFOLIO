@@ -1,4 +1,7 @@
+// imports react router
 import { useNavigate, useParams } from 'react-router-dom';
+
+//styles
 import { HeadingContainer, PostContainer, PostContent } from './Post.styles';
 import {
   ArrowSquareOutIcon,
@@ -7,14 +10,19 @@ import {
   ChatCircleDotsIcon,
   GithubLogoIcon
 } from '@phosphor-icons/react';
+
+// imports components and utils
 import { useGitHubData } from '../../contexts/GitHubContext/GitHubContext';
 import { formatProjectDate } from '../../util/formatters';
+
+// imports react
 import { useCallback, useEffect, useState } from 'react';
+
+// imports bibliotecas
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 

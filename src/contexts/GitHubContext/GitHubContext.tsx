@@ -34,8 +34,11 @@ interface GitHubContextType {
   username: string;
   profile: GitHubProfile | null;
   repos: GitHubRepo[];
+  currentPage: number;
+  totalPages: number | null;
   fetchRepos: (query?: string) => Promise<void>;
   fetchRepoCommentCount: (repoName: string) => Promise<number>;
+  ChangeCurrentPage: (pageNumber: number) => void;
 }
 
 interface GitHubContextProviderProps {
@@ -47,6 +50,13 @@ const GitHubContext = createContext({} as GitHubContextType);
 export function GitHubProvider({ children }: GitHubContextProviderProps) {
   const [profile, setProfile] = useState<GitHubProfile | null>(null);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number | null>(null);
+
+  function ChangeCurrentPage(pageNumber: number) {
+    setCurrentPage(pageNumber);
+  }
 
   const username = 'emanuelhenrique-dev';
   const token = import.meta.env.VITE_GITHUB_TOKEN;
@@ -101,21 +111,39 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
         const response = await axios.get(
           'https://api.github.com/search/repositories',
           {
-            params: { q: searchQuery, sort: 'updated', order: 'desc' },
+            params: {
+              q: searchQuery,
+              sort: 'updated',
+              order: 'desc',
+              per_page: 6,
+              page: currentPage
+            },
             headers: {
               Authorization: `Bearer ${token}`
             }
           }
         );
+        console.log(response);
 
         setRepos(response.data.items || []);
         console.log(response.data.items);
+
+        // ✅ Extrai número total de páginas do header "Link"
+        const linkHeader = response.headers.link;
+        if (linkHeader) {
+          const match = linkHeader.match(/&page=(\d+)>; rel="last"/);
+          if (match) {
+            const totalPages = parseInt(match[1]);
+            setTotalPages(totalPages);
+            console.log('total de paginas:', totalPages);
+          }
+        }
       } catch (error) {
         console.error('Erro ao buscar repositórios:', error);
         setRepos([]);
       }
     },
-    [username, token]
+    [username, token, currentPage]
   );
 
   // ver a quantidade de comments de um repositório
@@ -137,7 +165,16 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
 
   return (
     <GitHubContext.Provider
-      value={{ profile, repos, fetchRepos, fetchRepoCommentCount, username }}
+      value={{
+        profile,
+        repos,
+        username,
+        currentPage,
+        totalPages,
+        fetchRepos,
+        fetchRepoCommentCount,
+        ChangeCurrentPage
+      }}
     >
       {children}
     </GitHubContext.Provider>

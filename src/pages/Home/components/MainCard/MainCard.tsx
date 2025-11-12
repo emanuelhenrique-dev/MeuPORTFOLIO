@@ -1,24 +1,52 @@
 import { CardInfo, MainCardContainer, Tag } from './MainCard.styles';
-import projectImg from '/projectImg.png';
 
-export function MainCard() {
+interface MainCardProps {
+  name: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  github: string;
+  website: string;
+  post_url: string;
+}
+
+export function MainCard({
+  name,
+  description,
+  image,
+  technologies,
+  github,
+  website,
+  post_url
+}: MainCardProps) {
   return (
     <MainCardContainer>
-      <CardInfo>
+      <CardInfo to={post_url} title={description}>
         <div className="img-wrapper">
-          <img src={projectImg} alt="" />
+          <img src={image} alt="" />
         </div>
-        <h3>JavaScript data types and data structures</h3>
+        <h3>{name}</h3>
         <div className="tags">
-          <Tag $tag="css">css</Tag>
-          <Tag $tag="js">js</Tag>
-          <Tag $tag="html">Html</Tag>
-          <Tag $tag="figma">figma</Tag>
+          {technologies.map((technology) => {
+            return (
+              <Tag
+                $tag={
+                  technology as 'css' | 'js' | 'html' | 'figma' | 'react' | 'ts'
+                }
+              >
+                {technology}
+              </Tag>
+            );
+          })}
         </div>
       </CardInfo>
       <div className="buttons">
-        <button>Acessar Projeto</button>
-        <button>Repositório</button>
+        <a href={website} target="_blank">
+          Acessar Projeto
+        </a>
+        <a href={github} target="_blank">
+          Repositório
+        </a>
       </div>
     </MainCardContainer>
   );

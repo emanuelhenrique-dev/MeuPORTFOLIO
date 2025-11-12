@@ -30,6 +30,8 @@ import {
   useGitHubData,
   type GitHubProfile
 } from '../../contexts/GitHubContext/GitHubContext';
+import { mainProjects } from '../../data/mains-projects';
+import { Pagination } from './components/Pagination/Pagination';
 
 export function Home() {
   const { profile, repos } = useGitHubData();
@@ -98,10 +100,19 @@ export function Home() {
       <MainProjectsSection>
         <h3>Principais Projetos</h3>
         <div className="list-projects">
-          <MainCard />
-          <MainCard />
-          <MainCard />
-          <MainCard />
+          {mainProjects.map((project) => {
+            return (
+              <MainCard
+                name={project.name}
+                description={project.description}
+                image={project.image}
+                technologies={project.technologies}
+                github={project.github}
+                website={project.website}
+                post_url={project.post_url}
+              />
+            );
+          })}
         </div>
       </MainProjectsSection>
       <SkillsSection>
@@ -149,6 +160,7 @@ export function Home() {
             <h3>Nenhum repositório encontrado</h3>
           )}
         </div>
+        <Pagination />
       </RepositorySection>
     </HomeContainer>
   );
