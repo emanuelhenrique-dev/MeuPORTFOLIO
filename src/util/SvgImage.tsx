@@ -1,16 +1,9 @@
-import { useEffect, useRef } from 'react';
-import SVGInject from '@iconfu/svg-inject';
+type SVGIconProps = {
+  Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  size?: number;
+  className?: string;
+};
 
-type SVGImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
-
-export function SVGImage(props: SVGImageProps) {
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    if (imgRef.current) {
-      SVGInject(imgRef.current);
-    }
-  }, []);
-
-  return <img ref={imgRef} {...props} />;
+export function SVGImage({ Icon, size = 40, className }: SVGIconProps) {
+  return <Icon width={size} height={size} className={className} />;
 }

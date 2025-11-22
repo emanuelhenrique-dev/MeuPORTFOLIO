@@ -1,4 +1,3 @@
-import { SVGImage } from '../../util/SvgImage';
 import { MainCard } from './components/MainCard/MainCard';
 import {
   HomeContainer,
@@ -9,12 +8,13 @@ import {
 } from './Home.styles';
 
 import avatarTemp from '/avatarTemp.png';
-import cssImage from '/css.svg';
-import htmlImage from '/html.svg';
-import jsImage from '/js.svg';
-import tsImage from '/ts.svg';
-import reactImage from '/react.svg';
-// import figmaImage from '/figma.svg';
+
+import HtmlImage from '../../assets/html.svg?react';
+import CssImage from '../../assets/css.svg?react';
+import JsImage from '../../assets/js.svg?react';
+import TsImage from '../../assets/ts.svg?react';
+import ReactImage from '../../assets/react.svg?react';
+// import FigmaImage from '../../assets/figma.svg?react';
 
 import {
   ArrowSquareOutIcon,
@@ -121,19 +121,19 @@ export function Home() {
         <h3>Habilidades</h3>
         <div className="list-skills">
           <div className="html" title="Html">
-            <SVGImage src={htmlImage} alt="html" />
+            <HtmlImage />
           </div>
           <div className="css" title="Css">
-            <SVGImage src={cssImage} alt="css" />
+            <CssImage />
           </div>
           <div className="js" title="JavaScript">
-            <SVGImage src={jsImage} alt="js" />
+            <JsImage />
           </div>
           <div className="ts" title="TypeScript">
-            <SVGImage src={tsImage} alt="ts" />
+            <TsImage />
           </div>
           <div className="react" title="React">
-            <SVGImage src={reactImage} alt="react" />
+            <ReactImage />
           </div>
           <div className="figma" title="Figma">
             {/* <SVGImage src={figmaImage} alt="figma" /> */}
