@@ -3,7 +3,8 @@ import { useGitHubData } from '../../../../contexts/GitHubContext/GitHubContext'
 import { PaginationContainer } from './Pagination.styles';
 
 export function Pagination() {
-  const { currentPage, totalPages, ChangeCurrentPage } = useGitHubData();
+  const { currentPage, totalPages, ChangeCurrentPage, loading } =
+    useGitHubData();
 
   if (!totalPages || totalPages <= 1) return null;
 
@@ -22,7 +23,7 @@ export function Pagination() {
   };
 
   function renderPages() {
-    const pagesToShow = 5;
+    const pagesToShow = 4;
 
     const start = Math.max(
       1,
@@ -51,7 +52,7 @@ export function Pagination() {
   }
 
   return (
-    <PaginationContainer>
+    <PaginationContainer className={loading ? 'loading' : ''}>
       <button
         className="prev"
         onClick={handlePrev}

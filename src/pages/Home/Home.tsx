@@ -19,6 +19,7 @@ import reactImage from '/react.svg';
 import {
   ArrowSquareOutIcon,
   EnvelopeIcon,
+  GearIcon,
   GithubLogoIcon,
   InstagramLogoIcon,
   LinkedinLogoIcon,
@@ -34,7 +35,7 @@ import { mainProjects } from '../../data/mains-projects';
 import { Pagination } from './components/Pagination/Pagination';
 
 export function Home() {
-  const { profile, repos } = useGitHubData();
+  const { profile, repos, loading } = useGitHubData();
 
   const userProfile: GitHubProfile = {
     name: profile ? profile.name : 'Emanuel Silva',
@@ -100,9 +101,10 @@ export function Home() {
       <MainProjectsSection>
         <h3>Principais Projetos</h3>
         <div className="list-projects">
-          {mainProjects.map((project) => {
+          {mainProjects.map((project, index) => {
             return (
               <MainCard
+                key={index}
                 name={project.name}
                 description={project.description}
                 image={project.image}
@@ -142,19 +144,31 @@ export function Home() {
         <h3>Todas Repositórios</h3>
         <div className="list-container">
           <SearchForm />
+
           {repos.length > 0 ? (
-            <div className="repository-list">
-              {repos.map((repo) => {
-                return (
-                  <RepositoryCard
-                    id={repo.id}
-                    name={repo.name}
-                    key={repo.id}
-                    description={repo.description}
-                    created_at={repo.created_at}
-                  />
-                );
-              })}
+            <div className="repository-list-wrapper">
+              {loading && (
+                <div className="spinner-overlay">
+                  <GearIcon size={128} color="#97edaa" weight="fill" />
+                </div>
+              )}
+              <div
+                className={
+                  loading ? 'repository-list loading' : 'repository-list'
+                }
+              >
+                {repos.map((repo) => {
+                  return (
+                    <RepositoryCard
+                      id={repo.id}
+                      name={repo.name}
+                      key={repo.id}
+                      description={repo.description}
+                      created_at={repo.created_at}
+                    />
+                  );
+                })}
+              </div>
             </div>
           ) : (
             <h3>Nenhum repositório encontrado</h3>

@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState
 } from 'react';
 
@@ -36,9 +37,12 @@ interface GitHubContextType {
   repos: GitHubRepo[];
   currentPage: number;
   totalPages: number | null;
-  fetchRepos: (query?: string) => Promise<void>;
+  loading: boolean;
+  reposSizeRef: React.RefObject<number | null>;
+  fetchRepos: (query?: string, page?: number) => Promise<void>;
   fetchRepoCommentCount: (repoName: string) => Promise<number>;
   ChangeCurrentPage: (pageNumber: number) => void;
+  ChangeSearchQuery: (query: string) => void;
 }
 
 interface GitHubContextProviderProps {
@@ -53,13 +57,23 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const reposSizeRef = useRef<number | null>(null);
 
   function ChangeCurrentPage(pageNumber: number) {
+    if (pageNumber === currentPage) return;
     setCurrentPage(pageNumber);
+    fetchRepos(searchQuery, pageNumber); // sempre usa a query atual
+  }
+
+  function ChangeSearchQuery(query: string) {
+    setSearchQuery(query);
   }
 
   const username = 'emanuelhenrique-dev';
   const token = import.meta.env.VITE_GITHUB_TOKEN;
+  const cache = new Map();
 
   // --- GraphQL para buscar perfil ---
   const queryProfile = `
@@ -93,7 +107,7 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
 
       const user = response.data.data.user;
       setProfile(user);
-      console.log(user);
+      // console.log(user);
     } catch (error) {
       console.error('Erro ao buscar perfil:', error);
     }
@@ -101,11 +115,28 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
 
   // --- Busca de repositórios (REST API) ---
   const fetchRepos = useCallback(
-    async (query?: string) => {
+    async (query?: string, page?: number) => {
+      const cacheKey = `${username}-${query}-${currentPage}`;
+      const per_page = 6;
+
+      // ✅ 1. Retorna do cache se já tiver essa página
+      if (cache.has(cacheKey)) {
+        setRepos(cache.get(cacheKey));
+        return;
+      }
+
+      const activeQuery = query !== undefined ? query : searchQuery;
+      if (query !== undefined) setSearchQuery(query); // atualiza query ativa se vier
+
+      setLoading(true);
+
       try {
+        // console.log('page:', page);
+        const current = page ?? currentPage; // se page for passada, usa ela
+        // console.log('currentPage:', currentPage);
         const searchQuery =
-          query && query.trim() !== ''
-            ? `${query} user:${username}`
+          activeQuery && activeQuery.trim() !== ''
+            ? `${activeQuery} user:${username}`
             : `user:${username}`;
 
         const response = await axios.get(
@@ -115,18 +146,40 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
               q: searchQuery,
               sort: 'updated',
               order: 'desc',
-              per_page: 6,
-              page: currentPage
+              per_page,
+              page: current
             },
             headers: {
               Authorization: `Bearer ${token}`
-            }
+            },
+            validateStatus: (status) => status < 500 // evita que axios jogue exception automática em 403
           }
         );
-        console.log(response);
 
-        setRepos(response.data.items || []);
-        console.log(response.data.items);
+        // ✅ 2. Tratamento de rate limit (403)
+        if (response.status === 403) {
+          const reset = response.headers['x-ratelimit-reset'];
+          const resetDate = reset ? new Date(Number(reset) * 1000) : null;
+          const message = resetDate
+            ? `Limite da API atingido. Tente novamente às ${resetDate.toLocaleTimeString()}.`
+            : 'Limite de requisições da API atingido. Tente novamente mais tarde.';
+          console.warn(message);
+          alert(message);
+          return;
+        }
+
+        if (response.status !== 200) {
+          console.error('Erro na resposta da API:', response.status);
+          setRepos([]);
+          return;
+        }
+
+        const reposData = response.data.items || [];
+        setRepos(reposData);
+        //salva no cache
+        cache.set(cacheKey, reposData);
+
+        reposSizeRef.current = response.data.total_count;
 
         // ✅ Extrai número total de páginas do header "Link"
         const linkHeader = response.headers.link;
@@ -135,15 +188,28 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
           if (match) {
             const totalPages = parseInt(match[1]);
             setTotalPages(totalPages);
-            console.log('total de paginas:', totalPages);
+            // console.log('total de paginas:', totalPages);
+          } else {
+            setTotalPages(Math.ceil(response.data.total_count / per_page));
+            // console.log(
+            //   'total acho:',
+            //   Math.ceil(response.data.total_count / per_page)
+            // );
           }
+        } else {
+          // ❗ Fallback: se não houver link header, só existe 1 página
+          setTotalPages(1);
+          console.log('sem link header, total de paginas = 1');
         }
       } catch (error) {
         console.error('Erro ao buscar repositórios:', error);
         setRepos([]);
+      } finally {
+        setLoading(false);
       }
     },
-    [username, token, currentPage]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [username, token, currentPage, searchQuery]
   );
 
   // ver a quantidade de comments de um repositório
@@ -171,9 +237,12 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
         username,
         currentPage,
         totalPages,
+        loading,
+        reposSizeRef,
         fetchRepos,
         fetchRepoCommentCount,
-        ChangeCurrentPage
+        ChangeCurrentPage,
+        ChangeSearchQuery
       }}
     >
       {children}

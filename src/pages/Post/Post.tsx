@@ -8,6 +8,7 @@ import {
   CalendarBlankIcon,
   CaretLeftIcon,
   ChatCircleDotsIcon,
+  GearIcon,
   GithubLogoIcon
 } from '@phosphor-icons/react';
 
@@ -32,17 +33,22 @@ export function Post() {
   const { username, repos, fetchRepoCommentCount } = useGitHubData();
 
   const repository = repos.find((repo) => repo.id === Number(id));
+
   const token = import.meta.env.VITE_GITHUB_TOKEN;
 
   const [repositoryComments, setRepositoryComments] = useState<number | null>(
     null
   );
   const [repositoryReadme, setRepositoryReadme] = useState('');
+  const [repoLoading, setRepoLoading] = useState(false);
+
+  const [currentRepository, setCurrentRepository] = useState(repository);
 
   const fetchRepoReadme = useCallback(async () => {
+    setRepoLoading(true);
     try {
       const response = await axios.get(
-        `https://api.github.com/repos/${username}/${repository?.name}/readme`,
+        `https://api.github.com/repos/${username}/${currentRepository?.name}/readme`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined
         }
@@ -55,13 +61,38 @@ export function Post() {
     } catch (error) {
       console.error('Erro ao buscar o README do repositório:', error);
       setRepositoryReadme('');
+    } finally {
+      setRepoLoading(false);
     }
-  }, [repository, username, token]);
+  }, [currentRepository, username, token]);
+
+  const getRepository = useCallback(async () => {
+    setRepoLoading(true);
+    try {
+      const response = await axios.get(
+        `https://api.github.com/repositories/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json'
+          }
+        }
+      );
+
+      // console.log('teste:', response.data);
+
+      setCurrentRepository(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar o repositório:', error);
+    } finally {
+      setRepoLoading(false);
+    }
+  }, [id, token]);
 
   useEffect(() => {
-    if (!repository) return;
+    if (!currentRepository) return;
 
-    const repoName = repository.name;
+    const repoName = currentRepository.name;
 
     async function loadComments() {
       const count = await fetchRepoCommentCount(repoName);
@@ -70,35 +101,44 @@ export function Post() {
 
     loadComments();
     fetchRepoReadme();
-  }, [repository, fetchRepoCommentCount, fetchRepoReadme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRepository]);
+
+  //se n existe repositório faça isso
+  useEffect(() => {
+    if (!repository) {
+      getRepository();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [repository]);
 
   return (
     <PostContainer>
-      {repository ? (
+      {currentRepository ? (
         <>
-          <HeadingContainer>
+          <HeadingContainer className={repoLoading ? 'loading' : ''}>
             <div className="top-heading">
               <button onClick={() => navigate('/')}>
                 <CaretLeftIcon size={16} color="#97edaa" weight="bold" />
                 voltar
               </button>
-              <a href={repository.html_url} target="_blank">
+              <a href={currentRepository.html_url} target="_blank">
                 ver no github
                 <ArrowSquareOutIcon size={14} color="#97edaa" weight="bold" />
               </a>
             </div>
             <div className="post-info">
-              <h2>{repository.name}</h2>
+              <h2>{currentRepository.name}</h2>
               <div className="info">
                 <span>
                   <GithubLogoIcon size={20} color="#41704e" weight="bold" />{' '}
-                  <a href={repository.owner.html_url} target="_blank">
-                    {repository.owner.login}
+                  <a href={currentRepository.owner.html_url} target="_blank">
+                    {currentRepository.owner.login}
                   </a>
                 </span>
                 <span>
                   <CalendarBlankIcon size={20} color="#41704E" />
-                  {formatProjectDate(new Date(repository.created_at))}
+                  {formatProjectDate(new Date(currentRepository.created_at))}
                 </span>
                 <span>
                   <ChatCircleDotsIcon size={20} color="#41704e" weight="fill" />{' '}
@@ -108,6 +148,11 @@ export function Post() {
             </div>
           </HeadingContainer>
           <PostContent>
+            {repoLoading && (
+              <div className="spinner-overlay">
+                <GearIcon size={128} color="#97edaa" weight="fill" />
+              </div>
+            )}
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw]}
@@ -128,7 +173,7 @@ export function Post() {
                   const match = src;
                   return match?.includes('.github') ? (
                     <img
-                      src={`https://raw.githubusercontent.com/${username}/${repository.name}/refs/heads/main/${match}`}
+                      src={`https://raw.githubusercontent.com/${username}/${currentRepository.name}/refs/heads/main/${match}`}
                       width={width}
                       alt={alt}
                     />
@@ -151,7 +196,7 @@ export function Post() {
         </>
       ) : (
         <>
-          <HeadingContainer>
+          <HeadingContainer className={repoLoading ? 'loading' : ''}>
             <div className="top-heading">
               <button onClick={() => navigate('/')}>
                 <CaretLeftIcon size={16} color="#97edaa" weight="bold" />

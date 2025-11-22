@@ -245,6 +245,7 @@ export const RepositorySection = styled.section`
 
   .list-container {
     width: 100%;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -258,11 +259,44 @@ export const RepositorySection = styled.section`
     }
   }
 
+  .repository-list-wrapper {
+    position: relative;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    animation: spin 3s linear infinite;
+  }
+
   .repository-list {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(0, 416px));
     gap: 32px;
     justify-content: center;
+    margin: 0 auto;
+
+    &.loading {
+      opacity: 0.5;
+      user-select: none !important;
+      pointer-events: none !important;
+    }
   }
 `;

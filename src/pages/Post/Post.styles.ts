@@ -89,6 +89,24 @@ export const HeadingContainer = styled.div`
       }
     }
   }
+
+  //loading
+
+  @keyframes loading {
+    0% {
+      filter: brightness(1);
+    }
+    100% {
+      filter: brightness(1.2);
+    }
+  }
+
+  &.loading {
+    animation: loading 1s ease-in-out;
+    * {
+      opacity: 0 !important;
+    }
+  }
 `;
 
 export const PostContent = styled.div`
@@ -96,6 +114,7 @@ export const PostContent = styled.div`
   flex-direction: column;
   padding: 40px 32px;
   gap: 16px;
+  position: relative;
 
   color: ${(props) => props.theme['base-subtext']};
 
@@ -137,5 +156,27 @@ export const PostContent = styled.div`
 
   @media (max-width: 450px) {
     padding: 16px 12px;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    animation: spin 3s linear infinite;
   }
 `;

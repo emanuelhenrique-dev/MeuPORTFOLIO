@@ -27,9 +27,10 @@ export function MainCard({
         </div>
         <h3>{name}</h3>
         <div className="tags">
-          {technologies.map((technology) => {
+          {technologies.map((technology, index) => {
             return (
               <Tag
+                key={index}
                 $tag={
                   technology as 'css' | 'js' | 'html' | 'figma' | 'react' | 'ts'
                 }

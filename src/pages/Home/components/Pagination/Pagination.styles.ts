@@ -16,16 +16,17 @@ export const PaginationContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 2px;
     border-radius: 5.61664px;
     padding: 4px 8px;
 
-    background: #1c412a;
+    background: ${(props) => props.theme['base-border']};
     color: ${(props) => props.theme['base-title']};
-    border: 1px solid #1c412a;
+    border: 1px solid ${(props) => props.theme['base-border']};
 
     &:hover {
       color: ${(props) => props.theme['base-background']};
-      background-color: #97edaa;
+      background-color: ${(props) => props.theme['green-primary']};
     }
 
     &:disabled {
@@ -48,13 +49,20 @@ export const PaginationContainer = styled.div`
       border: none;
 
       &.active {
-        background: #1c412a;
+        background: ${(props) => props.theme['base-border']};
       }
 
       &:hover {
         color: ${(props) => props.theme['base-background']};
-        background-color: #97edaa;
+        background-color: ${(props) => props.theme['green-primary']};
       }
     }
+  }
+
+  &.loading {
+    opacity: 0.5;
+    cursor: default !important;
+    user-select: none !important;
+    pointer-events: none !important;
   }
 `;
