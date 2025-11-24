@@ -15,7 +15,7 @@ export interface GitHubProfile {
   bio: string;
   url: string;
   email?: string;
-  followers: { totalCount: number };
+  followers: number;
 }
 
 export interface GitHubRepo {
@@ -72,46 +72,33 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
   }
 
   const username = 'emanuelhenrique-dev';
-  const token = import.meta.env.VITE_GITHUB_TOKEN;
+  // const token = import.meta.env.VITE_GITHUB_TOKEN;
   const cache = new Map();
-
-  // --- GraphQL para buscar perfil ---
-  const queryProfile = `
-      {
-        user(login: "${username}") {
-          name
-          avatarUrl
-          bio
-          url
-          email
-          login
-          followers {
-            totalCount
-          }
-        }
-      }
-    `;
 
   // --- Busca dos dados profile (REST API) ---
   const fetchProfile = useCallback(async () => {
     try {
-      const response = await axios.post(
-        'https://api.github.com/graphql',
-        { query: queryProfile },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      const response = await axios.get(
+        `https://api.github.com/users/${username}`
       );
 
-      const user = response.data.data.user;
+      console.log(response.data.email);
+
+      const user = {
+        name: response.data.name,
+        avatarUrl: response.data.avatar_url,
+        bio: response.data.bio, // SE vier null, é porque GitHub não mostra sem token
+        url: response.data.html_url,
+        email: response.data.email, // normalmente vem null sem token
+        login: response.data.login,
+        followers: response.data.followers
+      };
+
       setProfile(user);
-      // console.log(user);
     } catch (error) {
       console.error('Erro ao buscar perfil:', error);
     }
-  }, [queryProfile, token]);
+  }, [username]);
 
   // --- Busca de repositórios (REST API) ---
   const fetchRepos = useCallback(
@@ -149,9 +136,9 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
               per_page,
               page: current
             },
-            headers: {
-              Authorization: `Bearer ${token}`
-            },
+            // headers: {
+            //   Authorization: `Bearer ${token}`
+            // }
             validateStatus: (status) => status < 500 // evita que axios jogue exception automática em 403
           }
         );
@@ -209,16 +196,16 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [username, token, currentPage, searchQuery]
+    [username, currentPage, searchQuery]
   );
 
   // ver a quantidade de comments de um repositório
   async function fetchRepoCommentCount(repoName: string) {
     const response = await axios.get(
-      `https://api.github.com/repos/${username}/${repoName}/issues`,
-      {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined
-      }
+      `https://api.github.com/repos/${username}/${repoName}/issues`
+      // {
+      //   headers: token ? { Authorization: `Bearer ${token}` } : undefined
+      // }
     );
 
     return response.data.length;

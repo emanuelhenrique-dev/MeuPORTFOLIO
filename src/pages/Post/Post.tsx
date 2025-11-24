@@ -34,7 +34,7 @@ export function Post() {
 
   const repository = repos.find((repo) => repo.id === Number(id));
 
-  const token = import.meta.env.VITE_GITHUB_TOKEN;
+  // const token = import.meta.env.VITE_GITHUB_TOKEN;
 
   const [repositoryComments, setRepositoryComments] = useState<number | null>(
     null
@@ -48,10 +48,10 @@ export function Post() {
     setRepoLoading(true);
     try {
       const response = await axios.get(
-        `https://api.github.com/repos/${username}/${currentRepository?.name}/readme`,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined
-        }
+        `https://api.github.com/repos/${username}/${currentRepository?.name}/readme`
+        // {
+        //   headers: token ? { Authorization: `Bearer ${token}` } : undefined
+        // }
       );
       const content = new TextDecoder('utf-8').decode(
         Uint8Array.from(atob(response.data.content), (c) => c.charCodeAt(0))
@@ -64,19 +64,19 @@ export function Post() {
     } finally {
       setRepoLoading(false);
     }
-  }, [currentRepository, username, token]);
+  }, [currentRepository, username]);
 
   const getRepository = useCallback(async () => {
     setRepoLoading(true);
     try {
       const response = await axios.get(
-        `https://api.github.com/repositories/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github+json'
-          }
-        }
+        `https://api.github.com/repositories/${id}`
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //     Accept: 'application/vnd.github+json'
+        //   }
+        // }
       );
 
       // console.log('teste:', response.data);
@@ -87,7 +87,7 @@ export function Post() {
     } finally {
       setRepoLoading(false);
     }
-  }, [id, token]);
+  }, [id]);
 
   useEffect(() => {
     if (!currentRepository) return;

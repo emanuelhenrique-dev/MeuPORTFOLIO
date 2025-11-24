@@ -43,8 +43,8 @@ export function Home() {
     avatarUrl: profile ? profile.avatarUrl : avatarTemp,
     bio: profile ? profile.bio : 'Desenvolvedor Front End',
     url: profile ? profile.url : 'https://github.com/emanuelhenrique-dev',
-    email: profile ? profile.email : 'emanuelhenriquefs@gmail.com',
-    followers: { totalCount: profile ? profile.followers.totalCount : 0 }
+    email: 'emanuelhenriquefs@gmail.com',
+    followers: profile ? profile.followers : 0
   };
 
   return (
@@ -85,8 +85,7 @@ export function Home() {
             </div>
             <a href={userProfile.url} target="_blank">
               <GithubLogoIcon size={24} color="#41704e" weight="bold" />{' '}
-              {userProfile.login} {'•'} {userProfile.followers.totalCount}{' '}
-              seguidores
+              {userProfile.login} {'•'} {userProfile.followers} seguidores
             </a>
             <a
               href="https://www.linkedin.com/in/emanuel-hfsilva/"
