@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/emanuelhenrique-dev/MeuPORTFOLIO/issues"
   },
-  "homepage": "https://github.com/emanuelhenrique-dev/MeuPORTFOLIO#readme"
+  "homepage": "https://github.com/emanuelhenrique-dev/MeuPORTFOLIO#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
 }
