@@ -78,8 +78,10 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
   // --- Busca dos dados profile pelo backend ---
   const fetchProfile = useCallback(async () => {
     try {
-      const response = await axios.post('/api/github/graphql', {
-        query: `
+      const response = await axios.post(
+        'https://meu-portfolio-4ayn.vercel.app/api/github/graphql',
+        {
+          query: `
           {
             user(login: "${username}") {
               name
@@ -94,7 +96,8 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
             }
           }
         `
-      });
+        }
+      );
 
       const data = response.data.data.user;
 
