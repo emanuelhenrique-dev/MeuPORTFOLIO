@@ -75,23 +75,37 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
   // const token = import.meta.env.VITE_GITHUB_TOKEN;
   const cache = new Map();
 
-  // --- Busca dos dados profile (REST API) ---
+  // --- Busca dos dados profile pelo backend ---
   const fetchProfile = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `https://api.github.com/users/${username}`
-      );
+      const response = await axios.post('/api/github/graphql', {
+        query: `
+          {
+            user(login: "${username}") {
+              name
+              login
+              avatarUrl
+              bio
+              url: url
+              email
+              followers {
+                totalCount
+              }
+            }
+          }
+        `
+      });
 
-      console.log(response.data.email);
+      const data = response.data.data.user;
 
-      const user = {
-        name: response.data.name,
-        avatarUrl: response.data.avatar_url,
-        bio: response.data.bio, // SE vier null, é porque GitHub não mostra sem token
-        url: response.data.html_url,
-        email: response.data.email, // normalmente vem null sem token
-        login: response.data.login,
-        followers: response.data.followers
+      const user: GitHubProfile = {
+        name: data.name,
+        login: data.login,
+        avatarUrl: data.avatarUrl,
+        bio: data.bio,
+        url: data.url,
+        email: data.email || undefined,
+        followers: data.followers.totalCount
       };
 
       setProfile(user);
@@ -100,7 +114,7 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
     }
   }, [username]);
 
-  // --- Busca de repositórios (REST API) ---
+  // --- Busca de repositórios pelo backend ---
   const fetchRepos = useCallback(
     async (query?: string, page?: number) => {
       const cacheKey = `${username}-${query}-${currentPage}`;
@@ -126,22 +140,16 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
             ? `${activeQuery} user:${username}`
             : `user:${username}`;
 
-        const response = await axios.get(
-          'https://api.github.com/search/repositories',
-          {
-            params: {
-              q: searchQuery,
-              sort: 'updated',
-              order: 'desc',
-              per_page,
-              page: current
-            },
-            // headers: {
-            //   Authorization: `Bearer ${token}`
-            // }
-            validateStatus: (status) => status < 500 // evita que axios jogue exception automática em 403
-          }
-        );
+        const response = await axios.get('/api/github/repos', {
+          params: {
+            q: searchQuery,
+            sort: 'updated',
+            order: 'desc',
+            per_page,
+            page: current
+          },
+          validateStatus: (status) => status < 500 // evita que axios jogue exception automática em 403
+        });
 
         // ✅ 2. Tratamento de rate limit (403)
         if (response.status === 403) {
@@ -199,16 +207,16 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
     [username, currentPage, searchQuery]
   );
 
-  // ver a quantidade de comments de um repositório
+  // --- Busca número de comentários de um repositório ---
   async function fetchRepoCommentCount(repoName: string) {
-    const response = await axios.get(
-      `https://api.github.com/repos/${username}/${repoName}/issues`
-      // {
-      //   headers: token ? { Authorization: `Bearer ${token}` } : undefined
-      // }
-    );
+    const response = await axios.get(`/api/github/repos`, {
+      params: {
+        q: `repo:${username}/${repoName} type:issue`,
+        per_page: 1
+      }
+    });
 
-    return response.data.length;
+    return response.data.total_count || 0;
   }
 
   useEffect(() => {
