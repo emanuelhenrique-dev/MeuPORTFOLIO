@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/emanuelhenrique-dev/MeuPORTFOLIO#readme",
   "dependencies": {
+    "axios": "^1.13.2",
     "node-fetch": "^3.3.2"
   }
 }
