@@ -13,7 +13,10 @@ import {
 } from '@phosphor-icons/react';
 
 // imports components and utils
-import { useGitHubData } from '../../contexts/GitHubContext/GitHubContext';
+import {
+  useGitHubData,
+  type GitHubRepo
+} from '../../contexts/GitHubContext/GitHubContext';
 import { formatProjectDate } from '../../util/formatters';
 
 // imports react
@@ -30,9 +33,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 export function Post() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { username, repos, fetchRepoCommentCount } = useGitHubData();
-
-  const repository = repos.find((repo) => repo.id === Number(id));
+  const { username, getRepoById, fetchRepoCommentCount } = useGitHubData();
 
   // const token = import.meta.env.VITE_GITHUB_TOKEN;
 
@@ -42,79 +43,50 @@ export function Post() {
   const [repositoryReadme, setRepositoryReadme] = useState('');
   const [repoLoading, setRepoLoading] = useState(false);
 
-  const [currentRepository, setCurrentRepository] = useState(repository);
+  const [repository, setRepository] = useState<GitHubRepo | null>(null);
 
   const fetchRepoReadme = useCallback(async () => {
+    if (!repository) return;
     setRepoLoading(true);
-    try {
-      const response = await axios.get(
-        `https://api.github.com/repos/${username}/${currentRepository?.name}/readme`
-        // {
-        //   headers: token ? { Authorization: `Bearer ${token}` } : undefined
-        // }
-      );
-      const content = new TextDecoder('utf-8').decode(
-        Uint8Array.from(atob(response.data.content), (c) => c.charCodeAt(0))
-      );
 
-      setRepositoryReadme(content);
+    try {
+      // Busca comentários
+      const commentsCount = await fetchRepoCommentCount(repository.name);
+      setRepositoryComments(commentsCount);
+
+      // Busca README
+      const response = await axios.get('/api/github/readme', {
+        params: { owner: username, repo: repository.name }
+      });
+      setRepositoryReadme(response.data.content);
     } catch (error) {
-      console.error('Erro ao buscar o README do repositório:', error);
+      console.error('Erro ao buscar detalhes do repositório:', error);
       setRepositoryReadme('');
+      setRepositoryComments(0);
     } finally {
       setRepoLoading(false);
     }
-  }, [currentRepository, username]);
-
-  const getRepository = useCallback(async () => {
-    setRepoLoading(true);
-    try {
-      const response = await axios.get(
-        `https://api.github.com/repositories/${id}`
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //     Accept: 'application/vnd.github+json'
-        //   }
-        // }
-      );
-
-      // console.log('teste:', response.data);
-
-      setCurrentRepository(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar o repositório:', error);
-    } finally {
-      setRepoLoading(false);
-    }
-  }, [id]);
+  }, [repository, username, fetchRepoCommentCount]);
 
   useEffect(() => {
-    if (!currentRepository) return;
-
-    const repoName = currentRepository.name;
-
-    async function loadComments() {
-      const count = await fetchRepoCommentCount(repoName);
-      setRepositoryComments(count);
+    async function loadRepo() {
+      setRepoLoading(true);
+      const repo = await getRepoById(Number(id));
+      setRepository(repo);
+      setRepoLoading(false);
     }
 
-    loadComments();
+    loadRepo();
+  }, [id, getRepoById]);
+
+  // Separado, roda quando repository muda
+  useEffect(() => {
     fetchRepoReadme();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRepository]);
-
-  //se n existe repositório faça isso
-  useEffect(() => {
-    if (!repository) {
-      getRepository();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repository]);
+  }, [fetchRepoReadme]);
 
   return (
     <PostContainer>
-      {currentRepository ? (
+      {repository ? (
         <>
           <HeadingContainer className={repoLoading ? 'loading' : ''}>
             <div className="top-heading">
@@ -122,23 +94,23 @@ export function Post() {
                 <CaretLeftIcon size={16} color="#97edaa" weight="bold" />
                 voltar
               </button>
-              <a href={currentRepository.html_url} target="_blank">
+              <a href={repository.html_url} target="_blank">
                 ver no github
                 <ArrowSquareOutIcon size={14} color="#97edaa" weight="bold" />
               </a>
             </div>
             <div className="post-info">
-              <h2>{currentRepository.name}</h2>
+              <h2>{repository.name}</h2>
               <div className="info">
                 <span>
                   <GithubLogoIcon size={20} color="#41704e" weight="bold" />{' '}
-                  <a href={currentRepository.owner.html_url} target="_blank">
-                    {currentRepository.owner.login}
+                  <a href={repository.owner.html_url} target="_blank">
+                    {repository.owner.login}
                   </a>
                 </span>
                 <span>
                   <CalendarBlankIcon size={20} color="#41704E" />
-                  {formatProjectDate(new Date(currentRepository.created_at))}
+                  {formatProjectDate(new Date(repository.created_at))}
                 </span>
                 <span>
                   <ChatCircleDotsIcon size={20} color="#41704e" weight="fill" />{' '}
@@ -173,7 +145,7 @@ export function Post() {
                   const match = src;
                   return match?.includes('.github') ? (
                     <img
-                      src={`https://raw.githubusercontent.com/${username}/${currentRepository.name}/refs/heads/main/${match}`}
+                      src={`https://raw.githubusercontent.com/${username}/${repository.name}/refs/heads/main/${match}`}
                       width={width}
                       alt={alt}
                     />

@@ -41,6 +41,7 @@ interface GitHubContextType {
   reposSizeRef: React.RefObject<number | null>;
   fetchRepos: (query?: string, page?: number) => Promise<void>;
   fetchRepoCommentCount: (repoName: string) => Promise<number>;
+  getRepoById: (id: number) => Promise<GitHubRepo>;
   ChangeCurrentPage: (pageNumber: number) => void;
   ChangeSearchQuery: (query: string) => void;
 }
@@ -73,7 +74,7 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
 
   const username = 'emanuelhenrique-dev';
   // const token = import.meta.env.VITE_GITHUB_TOKEN;
-  const cache = new Map();
+  const cacheRef = useRef<Map<string, GitHubRepo[]>>(new Map());
 
   // --- Busca dos dados profile pelo backend ---
   const fetchProfile = useCallback(async () => {
@@ -117,16 +118,19 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
   // --- Busca de repositórios pelo backend ---
   const fetchRepos = useCallback(
     async (query?: string, page?: number) => {
-      const cacheKey = `${username}-${query}-${currentPage}`;
+      const activeQuery = query !== undefined ? query : searchQuery;
+
+      const current = page ?? currentPage;
+      const cacheKey = `${username}-${activeQuery}-${current}`;
+
       const per_page = 6;
 
       // ✅ 1. Retorna do cache se já tiver essa página
-      if (cache.has(cacheKey)) {
-        setRepos(cache.get(cacheKey));
+      if (cacheRef.current.has(cacheKey)) {
+        setRepos(cacheRef.current.get(cacheKey)!);
         return;
       }
 
-      const activeQuery = query !== undefined ? query : searchQuery;
       if (query !== undefined) setSearchQuery(query); // atualiza query ativa se vier
 
       setLoading(true);
@@ -172,7 +176,8 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
         const reposData = response.data.items || [];
         setRepos(reposData);
         //salva no cache
-        cache.set(cacheKey, reposData);
+
+        cacheRef.current.set(cacheKey, reposData);
 
         reposSizeRef.current = response.data.total_count;
 
@@ -203,9 +208,19 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
         setLoading(false);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [username, currentPage, searchQuery]
   );
+
+  // --- Busca  um repositório pelo id ---
+  async function getRepoById(id: number) {
+    // 1. tenta achar no cache atual
+    const cached = repos.find((repo) => repo.id === id);
+    if (cached) return cached;
+
+    // 2. fallback backend
+    const response = await axios.get(`/api/github/repo/${id}`);
+    return response.data;
+  }
 
   // --- Busca número de comentários de um repositório ---
   async function fetchRepoCommentCount(repoName: string) {
@@ -236,6 +251,7 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
         reposSizeRef,
         fetchRepos,
         fetchRepoCommentCount,
+        getRepoById,
         ChangeCurrentPage,
         ChangeSearchQuery
       }}
