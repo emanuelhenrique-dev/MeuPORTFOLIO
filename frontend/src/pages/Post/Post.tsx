@@ -94,31 +94,42 @@ export function Post() {
                 <CaretLeftIcon size={16} color="#97edaa" weight="bold" />
                 voltar
               </button>
-              <a href={repository.html_url} target="_blank">
+              <a
+                href={repository?.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 ver no github
                 <ArrowSquareOutIcon size={14} color="#97edaa" weight="bold" />
               </a>
             </div>
             <div className="post-info">
-              <h2>{repository.name}</h2>
+              <h2>{repository?.name}</h2>
               <div className="info">
                 <span>
                   <GithubLogoIcon size={20} color="#41704e" weight="bold" />{' '}
-                  <a href={repository.owner.html_url} target="_blank">
-                    {repository.owner.login}
+                  <a
+                    href={repository?.owner?.html_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {repository?.owner?.login}
                   </a>
                 </span>
                 <span>
                   <CalendarBlankIcon size={20} color="#41704E" />
-                  {formatProjectDate(new Date(repository.created_at))}
+                  {repository?.created_at
+                    ? formatProjectDate(new Date(repository.created_at))
+                    : ''}
                 </span>
                 <span>
                   <ChatCircleDotsIcon size={20} color="#41704e" weight="fill" />{' '}
-                  {repositoryComments ? repositoryComments : '0'} comentários
+                  {repositoryComments ?? '0'} comentários
                 </span>
               </div>
             </div>
           </HeadingContainer>
+
           <PostContent>
             {repoLoading && (
               <div className="spinner-overlay">
@@ -142,10 +153,9 @@ export function Post() {
                   );
                 },
                 img({ src, width, alt }) {
-                  const match = src;
-                  return match?.includes('.github') ? (
+                  return src?.includes('.github') ? (
                     <img
-                      src={`https://raw.githubusercontent.com/${username}/${repository.name}/refs/heads/main/${match}`}
+                      src={`https://raw.githubusercontent.com/${username}/${repository?.name}/refs/heads/main/${src}`}
                       width={width}
                       alt={alt}
                     />
@@ -167,19 +177,17 @@ export function Post() {
           </PostContent>
         </>
       ) : (
-        <>
-          <HeadingContainer className={repoLoading ? 'loading' : ''}>
-            <div className="top-heading">
-              <button onClick={() => navigate('/')}>
-                <CaretLeftIcon size={16} color="#97edaa" weight="bold" />
-                voltar
-              </button>
-            </div>
-            <div className="post-info">
-              <h2>Repositório inexistente ou não encontrado</h2>
-            </div>
-          </HeadingContainer>
-        </>
+        <HeadingContainer className={repoLoading ? 'loading' : ''}>
+          <div className="top-heading">
+            <button onClick={() => navigate('/')}>
+              <CaretLeftIcon size={16} color="#97edaa" weight="bold" />
+              voltar
+            </button>
+          </div>
+          <div className="post-info">
+            <h2>Repositório inexistente ou não encontrado</h2>
+          </div>
+        </HeadingContainer>
       )}
     </PostContainer>
   );
