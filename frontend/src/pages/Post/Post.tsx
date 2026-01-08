@@ -20,7 +20,7 @@ import {
 import { formatProjectDate } from '../../util/formatters';
 
 // imports react
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // imports bibliotecas
 import axios from 'axios';
