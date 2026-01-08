@@ -16,7 +16,7 @@ export function RepositoryCard({
 }: RepositoryCardProps) {
   const repositoryCard: RepositoryCardProps = {
     id: id,
-    name: name.replace(/^-/, ''),
+    name: name,
     description: description
       ? description
       : 'Este repositório não possui descrição',
@@ -24,9 +24,11 @@ export function RepositoryCard({
   };
 
   return (
-    <RepositoryCardContainer to={`/post/${repositoryCard.id}`}>
+    <RepositoryCardContainer
+      to={`/post/emanuelhenrique-dev/${repositoryCard.name}`}
+    >
       <div className="heading">
-        <h3>{repositoryCard.name}</h3>
+        <h3>{repositoryCard.name.replace(/^-/, '')}</h3>
         <span>{formatProjectDate(new Date(created_at))}</span>
       </div>
       <p>{repositoryCard.description}</p>
