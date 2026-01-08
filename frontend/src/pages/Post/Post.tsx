@@ -57,7 +57,7 @@ export function Post() {
   }, [id, getRepoById]);
 
   useEffect(() => {
-    if (!repository || !username) return; // garante que temos dados antes de buscar
+    if (!repository || !repository.name || !username) return; // garante que temos dados antes de buscar
 
     const fetchReadme = async () => {
       setRepoLoading(true);
@@ -66,6 +66,9 @@ export function Post() {
         // Busca comentários
         const commentsCount = await fetchRepoCommentCount(repository.name);
         setRepositoryComments(commentsCount);
+
+        console.log(username);
+        console.log(repository.name);
 
         // Busca README
         const response = await axios.get('/api/github/readme', {
