@@ -45,29 +45,6 @@ export function Post() {
 
   const [repository, setRepository] = useState<GitHubRepo | null>(null);
 
-  const fetchRepoReadme = useCallback(async () => {
-    if (!repository) return;
-    setRepoLoading(true);
-
-    try {
-      // Busca comentários
-      const commentsCount = await fetchRepoCommentCount(repository.name);
-      setRepositoryComments(commentsCount);
-
-      // Busca README
-      const response = await axios.get('/api/github/readme', {
-        params: { owner: username, repo: repository.name }
-      });
-      setRepositoryReadme(response.data.content);
-    } catch (error) {
-      console.error('Erro ao buscar detalhes do repositório:', error);
-      setRepositoryReadme('');
-      setRepositoryComments(0);
-    } finally {
-      setRepoLoading(false);
-    }
-  }, [repository, username, fetchRepoCommentCount]);
-
   useEffect(() => {
     async function loadRepo() {
       setRepoLoading(true);
@@ -79,10 +56,33 @@ export function Post() {
     loadRepo();
   }, [id, getRepoById]);
 
-  // Separado, roda quando repository muda
   useEffect(() => {
-    fetchRepoReadme();
-  }, [fetchRepoReadme]);
+    if (!repository || !username) return; // garante que temos dados antes de buscar
+
+    const fetchReadme = async () => {
+      setRepoLoading(true);
+
+      try {
+        // Busca comentários
+        const commentsCount = await fetchRepoCommentCount(repository.name);
+        setRepositoryComments(commentsCount);
+
+        // Busca README
+        const response = await axios.get('/api/github/readme', {
+          params: { owner: username, repo: repository.name }
+        });
+        setRepositoryReadme(response.data.content);
+      } catch (error) {
+        console.error('Erro ao buscar detalhes do repositório:', error);
+        setRepositoryReadme('');
+        setRepositoryComments(0);
+      } finally {
+        setRepoLoading(false);
+      }
+    };
+
+    fetchReadme();
+  }, [repository, username, fetchRepoCommentCount]);
 
   return (
     <PostContainer>
