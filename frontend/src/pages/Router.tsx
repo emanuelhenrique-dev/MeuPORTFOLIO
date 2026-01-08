@@ -13,7 +13,7 @@ export const Router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: '/post/:id',
+        path: '/post/:owner/:repo',
         element: <Post />
       }
     ]

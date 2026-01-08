@@ -1,16 +1,15 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
-  const { id } = req.query;
+  const { owner, repo } = req.query;
 
-  if (!id) {
-    return res.status(400).json({ error: 'ID do repositório é obrigatório' });
+  if (!owner || !repo) {
+    return res.status(400).json({ error: 'owner e repo são obrigatórios' });
   }
 
   try {
-    // Chama a API pública do GitHub com token do backend
     const response = await axios.get(
-      `https://api.github.com/repositories/${id}`,
+      `https://api.github.com/repos/${owner}/${repo}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
@@ -27,9 +26,11 @@ export default async function handler(req, res) {
     if (response.status === 403) {
       const reset = response.headers['x-ratelimit-reset'];
       const resetDate = reset ? new Date(Number(reset) * 1000) : null;
+
       const message = resetDate
         ? `Limite da API atingido. Tente novamente às ${resetDate.toLocaleTimeString()}.`
         : 'Limite de requisições da API atingido. Tente novamente mais tarde.';
+
       return res.status(403).json({ error: message });
     }
 

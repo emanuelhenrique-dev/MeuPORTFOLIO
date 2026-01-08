@@ -6,7 +6,7 @@ export const mainProjects = [
     technologies: ['react', 'js', 'css', 'figma'],
     github: 'https://github.com/emanuelhenrique-dev/Music-player-React',
     website: 'https://music-player-react-amber.vercel.app/',
-    post_url: '/post/703116870'
+    post_url: '/post/emanuelhenrique-dev/Music-player-React'
   },
   {
     name: 'Steam Fake',
@@ -16,7 +16,7 @@ export const mainProjects = [
     technologies: ['js', 'css', 'html', 'figma'],
     github: 'https://github.com/emanuelhenrique-dev/Steam_FIc',
     website: 'https://steam-fic.vercel.app/',
-    post_url: '/post/575594442'
+    post_url: '/post/emanuelhenrique-dev/Steam_FIc'
   },
   {
     name: 'Random SpiritCard',
@@ -25,7 +25,7 @@ export const mainProjects = [
     technologies: ['react', 'js', 'css', 'figma'],
     github: 'https://github.com/emanuelhenrique-dev/RandomSpiritV2',
     website: 'https://random-spirit-v2.vercel.app/',
-    post_url: '/post/847729871'
+    post_url: '/post/emanuelhenrique-dev/RandomSpiritV2'
   },
   {
     name: 'Blog ReactVite',
@@ -34,6 +34,6 @@ export const mainProjects = [
     technologies: ['react', 'ts', 'css', 'Figma'],
     github: 'https://github.com/emanuelhenrique-dev/blog-reactVite',
     website: 'https://meu-blog-react.vercel.app/',
-    post_url: '/post/1057568530'
+    post_url: '/post/emanuelhenrique-dev/blog-reactVite'
   }
 ];

@@ -41,7 +41,7 @@ interface GitHubContextType {
   reposSizeRef: React.RefObject<number | null>;
   fetchRepos: (query?: string, page?: number) => Promise<void>;
   fetchRepoCommentCount: (repoName: string) => Promise<number>;
-  getRepoById: (id: number) => Promise<GitHubRepo>;
+  getRepo: (owner: string, repo: string) => Promise<GitHubRepo>;
   ChangeCurrentPage: (pageNumber: number) => void;
   ChangeSearchQuery: (query: string) => void;
 }
@@ -211,14 +211,18 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
     [username, currentPage, searchQuery]
   );
 
-  // --- Busca  um repositório pelo id ---
-  async function getRepoById(id: number) {
-    // 1. tenta achar no cache atual
-    const cached = repos.find((repo) => repo.id === id);
+  // --- Busca  um repositório pelo nome e usuário---
+  async function getRepo(owner: string, repo: string) {
+    const cached = repos.find(
+      (r) => r.owner.login === owner && r.name === repo
+    );
+
     if (cached) return cached;
 
-    // 2. fallback backend
-    const response = await axios.get(`/api/github/repo/${id}`);
+    const response = await axios.get('/api/github/repo', {
+      params: { owner, repo }
+    });
+
     return response.data;
   }
 
@@ -251,7 +255,7 @@ export function GitHubProvider({ children }: GitHubContextProviderProps) {
         reposSizeRef,
         fetchRepos,
         fetchRepoCommentCount,
-        getRepoById,
+        getRepo,
         ChangeCurrentPage,
         ChangeSearchQuery
       }}

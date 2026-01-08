@@ -32,8 +32,8 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export function Post() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { username, getRepoById, fetchRepoCommentCount } = useGitHubData();
+  const { owner, repo } = useParams();
+  const { username, getRepo, fetchRepoCommentCount } = useGitHubData();
 
   // const token = import.meta.env.VITE_GITHUB_TOKEN;
 
@@ -46,15 +46,20 @@ export function Post() {
   const [repository, setRepository] = useState<GitHubRepo | null>(null);
 
   useEffect(() => {
+    if (!owner || !repo) return;
+
     async function loadRepo() {
       setRepoLoading(true);
-      const repo = await getRepoById(Number(id));
-      setRepository(repo);
-      setRepoLoading(false);
+      try {
+        const data = await getRepo(owner!, repo!);
+        setRepository(data);
+      } finally {
+        setRepoLoading(false);
+      }
     }
 
     loadRepo();
-  }, [id, getRepoById]);
+  }, [owner, repo, getRepo]);
 
   useEffect(() => {
     if (!repository || !repository.name || !username) return; // garante que temos dados antes de buscar
@@ -67,8 +72,8 @@ export function Post() {
         const commentsCount = await fetchRepoCommentCount(repository.name);
         setRepositoryComments(commentsCount);
 
-        console.log(username);
-        console.log(repository.name);
+        // console.log(username);
+        // console.log(repository.name);
 
         // Busca README
         const response = await axios.get('/api/github/readme', {
