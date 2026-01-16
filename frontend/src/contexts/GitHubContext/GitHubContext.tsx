@@ -29,6 +29,7 @@ export interface GitHubRepo {
     login: string;
     html_url: string;
   };
+  homepage: string;
 }
 
 interface GitHubContextType {

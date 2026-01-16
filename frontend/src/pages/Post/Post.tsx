@@ -9,7 +9,8 @@ import {
   CaretLeftIcon,
   ChatCircleDotsIcon,
   GearIcon,
-  GithubLogoIcon
+  GithubLogoIcon,
+  LinkIcon
 } from '@phosphor-icons/react';
 
 // imports components and utils
@@ -133,6 +134,14 @@ export function Post() {
                 <span>
                   <ChatCircleDotsIcon size={20} color="#41704e" weight="fill" />{' '}
                   {repositoryComments ?? '0'} comentários
+                </span>
+                <span>
+                  {repository?.homepage ? (
+                    <>
+                      <LinkIcon size={20} color="#41704e" weight="fill" />
+                      {repository.homepage}
+                    </>
+                  ) : null}
                 </span>
               </div>
             </div>
