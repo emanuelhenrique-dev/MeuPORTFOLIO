@@ -138,8 +138,8 @@ export function Post() {
                 <span>
                   {repository?.homepage ? (
                     <>
-                      <LinkIcon size={20} color="#41704e" weight="fill" />
-                      {repository.homepage}
+                      <LinkIcon size={20} color="#41704e" />
+                      <a href={repository.homepage}></a>
                     </>
                   ) : null}
                 </span>
