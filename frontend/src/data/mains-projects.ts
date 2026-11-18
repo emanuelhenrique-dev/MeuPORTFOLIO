@@ -19,19 +19,20 @@ export const mainProjects = [
     post_url: '/post/emanuelhenrique-dev/Steam_FIc'
   },
   {
-    name: 'Random SpiritCard',
-    description: 'Elden ring game random spirit generator made with React.',
-    image: '/image 5.png',
-    technologies: ['react', 'js', 'css', 'figma'],
-    github: 'https://github.com/emanuelhenrique-dev/RandomSpiritV2',
-    website: 'https://random-spirit-v2.vercel.app/',
-    post_url: '/post/emanuelhenrique-dev/RandomSpiritV2'
+    name: 'Venstock',
+    description: 'Aplicativo de venda e estoque feito em react native.',
+    image: '/image5.png',
+    technologies: ['react native', 'js', 'css', 'figma'],
+    github: 'https://github.com/emanuelhenrique-dev/venstock-app',
+    website:
+      'https://drive.google.com/file/d/1L5441pZ5c8-BrkrgWJ8s3eh4nwmpmoeP/view?usp=sharing',
+    post_url: '/post/emanuelhenrique-dev/venstock-app'
   },
   {
     name: 'Blog ReactVite',
     description: 'Blog feito com vite com React e typescript.',
     image: '/projectImg3.png',
-    technologies: ['react', 'ts', 'css', 'Figma'],
+    technologies: ['react', 'ts', 'css', 'figma'],
     github: 'https://github.com/emanuelhenrique-dev/blog-reactVite',
     website: 'https://meu-blog-react.vercel.app/',
     post_url: '/post/emanuelhenrique-dev/blog-reactVite'

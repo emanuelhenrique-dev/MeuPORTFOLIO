@@ -32,7 +32,14 @@ export function MainCard({
               <Tag
                 key={index}
                 $tag={
-                  technology as 'css' | 'js' | 'html' | 'figma' | 'react' | 'ts'
+                  technology as
+                    | 'css'
+                    | 'js'
+                    | 'html'
+                    | 'figma'
+                    | 'react'
+                    | 'ts'
+                    | 'react native'
                 }
               >
                 {technology}

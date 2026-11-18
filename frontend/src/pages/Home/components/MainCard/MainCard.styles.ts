@@ -79,7 +79,7 @@ export const CardInfo = styled(onLink)`
 `;
 
 export interface tagVariant {
-  $tag: 'css' | 'js' | 'html' | 'figma' | 'react' | 'ts';
+  $tag: 'css' | 'js' | 'html' | 'figma' | 'react' | 'react native' | 'ts';
 }
 
 export const Tag = styled.span<tagVariant>`
@@ -96,12 +96,14 @@ export const Tag = styled.span<tagVariant>`
     $tag === 'css'
       ? ' #4fb3ecff'
       : $tag === 'js'
-      ? '#D8C232'
-      : $tag === 'html'
-      ? '#E14E1D'
-      : $tag === 'react'
-      ? '#305174ff'
-      : $tag === 'ts'
-      ? '#0277BD'
-      : '#C11574'};
+        ? '#D8C232'
+        : $tag === 'html'
+          ? '#E14E1D'
+          : $tag === 'react'
+            ? '#305174ff'
+            : $tag === 'ts'
+              ? '#0277BD'
+              : $tag === 'react native'
+                ? '#61DAFB'
+                : '#C11574'};
 `;
