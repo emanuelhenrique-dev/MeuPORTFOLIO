@@ -24,7 +24,7 @@ export const HeaderContainer = styled.header`
     rgba(141, 201, 155, 0.5) 482%
   );
   overflow: hidden;
-  z-index: -1;
+  z-index: 0;
 
   &::before {
     content: '';
@@ -69,6 +69,17 @@ export const HeaderContainer = styled.header`
     background-repeat: no-repeat;
     background-position-x: left;
     background-position-y: center;
+  }
+
+  .linkOut {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    z-index: 100;
+
+    font-weight: 400;
+    font-size: 14px;
+    color: ${(props) => props.theme['green-primary']};
   }
 `;
 

@@ -21,6 +21,9 @@ export const HeadingContainer = styled.div`
   box-shadow: 0px 2px 28px rgba(151, 237, 170, 0.2);
   border-radius: 10px;
 
+  position: relative;
+  z-index: 1;
+
   .top-heading {
     display: flex;
     justify-content: space-between;

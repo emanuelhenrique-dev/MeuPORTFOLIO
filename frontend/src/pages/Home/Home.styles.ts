@@ -17,6 +17,8 @@ export const ProfileSection = styled.section`
   justify-content: center;
   gap: 8px;
   align-items: center;
+  position: relative;
+  z-index: 1;
 
   padding: 40px 32px;
   margin-top: -100px;
