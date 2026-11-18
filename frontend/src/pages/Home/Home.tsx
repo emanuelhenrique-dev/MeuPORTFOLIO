@@ -63,13 +63,16 @@ export function Home() {
             </a>
           </div>
           <p>
-            Sou um desenvolvedor iniciante apaixonado por tecnologia. Tenho
-            conhecimento em HTML, CSS3 e JavaScript, e atualmente estou me
-            especializando em React e TypeScript. Também possuo noções básicas
-            de UI Design e Figma, o que me ajuda a pensar melhor na experiência
-            do usuário. Apesar de ainda não ter experiência profissional, estou
-            em busca da minha primeira oportunidade para colocar em prática tudo
-            que venho aprendendo e continuar evoluindo como desenvolvedor.
+            Desenvolvedor Front-End apaixonado por criar experiências digitais
+            fluidas e intuitivas. Especializado no ecossistema moderno com
+            React, TypeScript e Next.js, com foco em código limpo, componentes
+            reutilizáveis e performance. Além do desenvolvimento web, crio
+            aplicações mobile completas utilizando React Native e Expo,
+            integrando design e funcionalidade. Também possuo conhecimentos em
+            UI Design e Figma, o que me permite traduzir wireframes em
+            interfaces responsivas alinhadas à experiência do usuário. Hoje, meu
+            foco é transformar boas ideias em produtos sólidos, escaláveis e bem
+            estruturados.
           </p>
           <div className="contacts">
             <a href="https://www.instagram.com/emanuelhfs/" target="_blank">
