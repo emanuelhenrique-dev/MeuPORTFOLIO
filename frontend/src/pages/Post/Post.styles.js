@@ -176,7 +176,7 @@ export const PostContent = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1;
+    z-index: 100;
     animation: spin 3s linear infinite;
   }
 `;
