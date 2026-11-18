@@ -134,6 +134,9 @@ export function Home() {
           <div className="react" title="React">
             <ReactImage />
           </div>
+          <div className="react-native" title="React Native">
+            <ReactImage />
+          </div>
           <div className="figma" title="Figma">
             {/* <SVGImage src={figmaImage} alt="figma" /> */}
           </div>

@@ -209,6 +209,9 @@ export const SkillsSection = styled.section`
         &.react svg path {
           fill: #087ea4;
         }
+        &.react-native svg path {
+          fill: #61dafb;
+        }
       }
 
       &.figma {
