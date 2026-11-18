@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-export const PostContainer = styled.main `
+export const PostContainer = styled.main`
   flex: 1;
 
   width: 100%;
@@ -7,7 +7,7 @@ export const PostContainer = styled.main `
   margin: 0 auto;
   padding: 30px 20px;
 `;
-export const HeadingContainer = styled.div `
+export const HeadingContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -18,6 +18,9 @@ export const HeadingContainer = styled.div `
   background-color: ${(props) => props.theme['base-profile']};
   box-shadow: 0px 2px 28px rgba(151, 237, 170, 0.2);
   border-radius: 10px;
+
+  position: relative;
+  z-index: 10;
 
   .top-heading {
     display: flex;
@@ -106,7 +109,7 @@ export const HeadingContainer = styled.div `
     }
   }
 `;
-export const PostContent = styled.div `
+export const PostContent = styled.div`
   display: flex;
   flex-direction: column;
   padding: 40px 32px;
